@@ -1,0 +1,42 @@
+services:
+  app:
+    container_name: express-app
+    image: express-app
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    expose:
+      - '4000'
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./src:/code/src
+    env_file:
+      - .env
+    command: npm run start:watch
+    networks:
+      - app-net
+    
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+    networks:
+      - app-net
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - '6379:6379'
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+  
