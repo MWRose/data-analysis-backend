@@ -16,6 +16,7 @@ export async function getMongoHealthcheck() {
         stats.status = stats.ok === 1 ? "OK" : "ERROR";
         return stats;
     } catch (e) {
+        console.log(e);
         return;
     }
 }

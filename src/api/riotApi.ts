@@ -49,23 +49,28 @@ export const getLastMatches = async (puuid: string, count?: number): Promise<JSO
 export const getRelevantMatchData = async (puuid: string, count?: number): Promise<RiotGameData[]> => {
     return getLastMatches(puuid, count).then((matches: any) => {
         return matches.map((match: any): RiotGameData => {
-            match.personal = match?.info?.participants?.filter((p: any) => p?.puuid === ENVVARS.RIOT_PUUID)?.[0]
-            return {
-                kills: match.personal?.kills,
-                deaths: match.personal?.deaths,
-                assists: match.personal?.assists,
-                champion: match.personal?.championName,
-                win: match.personal?.win,
-                gameId: match.metadata?.matchId,
-                totalMinionsKilled: match.personal?.totalMinionsKilled,
-                laneMinionsFirst10Minutes: match.personal?.challenges?.laneMinionsFirst10Minutes,
-                individualPosition: match.personal?.individualPosition,
-            }
+            return extractData(match, ENVVARS.RIOT_PUUID ?? "")
         });
     })
 };
 
+export const extractData = (match: any, puuid: string): RiotGameData => {
+
+    match.personal = match?.info?.participants?.filter((p: any) => p?.puuid === puuid)?.[0]
+    return {
+        kills: match.personal?.kills,
+        deaths: match.personal?.deaths,
+        assists: match.personal?.assists,
+        champion: match.personal?.championName,
+        win: match.personal?.win,
+        gameId: match.metadata?.matchId,
+        totalMinionsKilled: match.personal?.totalMinionsKilled,
+        laneMinionsFirst10Minutes: match.personal?.challenges?.laneMinionsFirst10Minutes,
+        individualPosition: match.personal?.individualPosition,
+    };
+}
+
 export const updateMatchData = async (puuid: string, count?: number) => {
     const lastMatches = await getRelevantMatchData(puuid, count);
-    updateDocuments(lastMatches).then(_ => console.log('success'));
+    updateDocuments(lastMatches).then(() => console.log('success'));
 }
