@@ -11,7 +11,7 @@ router.get("/healthcheck", async (req: Request, res: Response, next: NextFunctio
         mongoHealthcheck = await getMongoHealthcheck();
         redisHealthcheck = await getRedisHealthcheck();
     } catch (e) {
-        console.log('we found the error')
+        console.log('Healthcheck error', e)
     }
 
     const healthcheck = {
